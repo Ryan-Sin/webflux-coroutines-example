@@ -1,0 +1,85 @@
+spring:
+  application:
+    name: webflux-coroutines-example
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs
+  group-configs:
+    - group: order
+      paths-to-match: /api/**
+  swagger-ui:
+    enabled: true
+    path: /api-info
+    operations-sorter: method
+    config-url: /api-docs/swagger-config
+    urls:
+      - url: /api-docs
+        name: Order System API
+    validator-url: null
+    use-root-path: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "test"
+  r2dbc:
+    url: r2dbc:h2:mem:///ryan;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password:
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:/db/h2.schema.sql
+      data-locations: classpath:/db/h2.data.sql
+
+jwt:
+  header: Authorization
+  secretKey: Y2xvdWQtZGV2LXNlcnZpY2VzLWtvdGxpbi1hcGktdHV0b3JpYWwtY2xvdWQtZGV2LXNlcnZpY2VzLWtvdGxpbi1hcGktdHV0b3JpYWw=
+  token-expiration-time: 86400
+
+logging:
+  level:
+    org.hibernate.sql: debug
+    org.hibernate.type: trace
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "local"
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/ryan
+    username: postgres
+    password: postgres
+
+jwt:
+  header: Authorization
+  secretKey: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK
+  token-expiration-time: 86400
+
+logging:
+  level:
+    io.r2dbc.postgresql: INFO
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "develop"
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/ryan
+    username: postgres
+    password: postgres
+
+jwt:
+  header: Authorization
+  secretKey: NW1qYWdydjdqb2tHWndPSG1SQUZMckltVVFHbW5jcGdsaDVkUm9pck1mOUtRMnQ0RGZreWdzVXBRcUZsZUhhTw==
+  token-expiration-time: 86400
+
+logging:
+  level:
+    io.r2dbc.postgresql: INFO

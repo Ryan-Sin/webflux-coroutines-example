@@ -1,0 +1,51 @@
+-- 개발/테스트(H2) 환경용
+
+CREATE SCHEMA IF NOT EXISTS ryan;
+SET SCHEMA ryan;
+
+CREATE TABLE IF NOT EXISTS customer (
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP,
+    UNIQUE (email)
+);
+
+CREATE TABLE IF NOT EXISTS products (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    thumbnail VARCHAR(255) NOT NULL,
+    price INT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP,
+    UNIQUE (name)
+);
+
+CREATE TABLE IF NOT EXISTS drawer (
+    id BIGSERIAL PRIMARY KEY,
+    customer_id BIGINT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    thumbnail VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP,
+    UNIQUE (customer_id, name, deleted_at),
+    FOREIGN KEY (customer_id) REFERENCES customer (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
+
+CREATE TABLE IF NOT EXISTS favorite (
+    id BIGSERIAL PRIMARY KEY,
+    customer_id BIGINT NOT NULL,
+    drawer_id BIGINT NOT NULL,
+    products_id BIGINT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (customer_id, drawer_id, products_id),
+    FOREIGN KEY (customer_id) REFERENCES customer (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    FOREIGN KEY (drawer_id) REFERENCES drawer (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    FOREIGN KEY (products_id) REFERENCES products (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
+
+-- (H2에서는 COMMENT, TRIGGER는 생략하거나 별도 스크립트로 관리)
